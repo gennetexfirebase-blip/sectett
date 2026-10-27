@@ -1,0 +1,521 @@
+<title>Нууц Бэх</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  /* Бүтэц: төвлөрсөн нэг багана, горим сонгогч, оролт дээр нь үр дүн доор нь */
+  :root {
+    --bg: #f4f5f9;
+    --surface: #ffffff;
+    --surface-2: #eef0f6;
+    --ink: #1b1d29;
+    --muted: #5d6276;
+    --faint: #9297ab;
+    --line: #d9dce6;
+    --accent: #3b4ef0;
+    --accent-soft: #e6e8fd;
+    --good: #0f8a5f;
+    --warn: #c98a1a;
+    --bad: #c23b4b;
+    --shadow: 0 1px 2px rgba(27,29,41,.06), 0 8px 24px rgba(27,29,41,.08);
+    --sans: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c0e16;
+      --surface: #141724;
+      --surface-2: #1d2130;
+      --ink: #eef0f6;
+      --muted: #969bb0;
+      --faint: #6b708a;
+      --line: #2a2f41;
+      --accent: #7c8cff;
+      --accent-soft: #1e2440;
+      --good: #4cd4a0;
+      --warn: #e8b55a;
+      --bad: #ff8294;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.45);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c0e16;
+    --surface: #141724;
+    --surface-2: #1d2130;
+    --ink: #eef0f6;
+    --muted: #969bb0;
+    --faint: #6b708a;
+    --line: #2a2f41;
+    --accent: #7c8cff;
+    --accent-soft: #1e2440;
+    --good: #4cd4a0;
+    --warn: #e8b55a;
+    --bad: #ff8294;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.45);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.55;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 40px 64px;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; }
+
+  header { margin-bottom: 28px; }
+  .brand {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-weight: 600; letter-spacing: -.01em; font-size: 1.05rem;
+  }
+  .dot {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--accent-soft);
+  }
+  h1 {
+    font-size: clamp(1.8rem, 5.5vw, 2.5rem);
+    line-height: 1.12; letter-spacing: -.02em; font-weight: 600;
+    margin: 18px 0 8px; text-wrap: balance;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+  .lede { color: var(--muted); max-width: 54ch; margin: 0; }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 20px;
+    margin-top: 24px;
+  }
+
+  /* хэсгийн гарчиг — хоёр талдаа зураастай, төвд */
+  .sec-head {
+    display: flex; align-items: center; gap: 14px;
+    font-size: .82rem; font-weight: 600; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted);
+    margin: 0 0 20px;
+  }
+  .sec-head::before, .sec-head::after {
+    content: ""; flex: 1; height: 1px; background: var(--line);
+  }
+
+  label { display: block; margin-bottom: 18px; }
+  .lab {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+    font-size: .78rem; font-weight: 600; letter-spacing: .02em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 7px;
+  }
+  .lab .opt { font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--faint); }
+  .lab .count { font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--faint); font-family: var(--mono); font-size: .9em; white-space: nowrap; }
+  textarea, input[type="text"], input[type="password"] {
+    width: 100%; font: inherit; color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 11px 13px; resize: vertical;
+  }
+  textarea { min-height: 72px; }
+  textarea:focus, input:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+
+  .pwrow { display: flex; gap: 8px; }
+  .pwrow input { flex: 1; min-width: 0; }
+  .ghost {
+    font: inherit; font-size: .85rem; font-weight: 600;
+    border: 1px solid var(--line); background: var(--surface-2);
+    color: var(--muted); border-radius: 10px; padding: 0 14px; cursor: pointer;
+  }
+
+  /* нууц үгийн хүчний хэмжүүр */
+  .meter { margin-top: 9px; }
+  .meter-track { height: 5px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+  .meter-fill { height: 100%; width: 0; border-radius: 3px; transition: width .25s ease, background .25s ease; }
+  .meter-label { font-size: .76rem; color: var(--faint); margin-top: 5px; font-weight: 500; }
+
+  .go {
+    width: 100%; font: inherit; font-weight: 600; font-size: 1rem;
+    color: #fff; background: var(--accent); border: 0;
+    border-radius: 11px; padding: 13px; cursor: pointer; margin-top: 4px;
+  }
+  .go:disabled { opacity: .55; cursor: default; }
+  :root[data-theme="dark"] .go, :root:not([data-theme="light"]) .go { color: #0c0e16; }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .go { color: #fff; } }
+
+  .result { margin-top: 22px; animation: rise .3s ease both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .result { animation: none; } .meter-fill { transition: none; } }
+  .result[hidden] { display: none; }
+  .result-head {
+    display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    margin-bottom: 8px;
+  }
+  .result-head .lab { margin: 0; }
+  .result-actions { display: flex; gap: 6px; }
+  .out {
+    font-family: var(--mono); font-size: .92rem;
+    background: var(--surface-2); border: 1px dashed var(--line);
+    border-radius: 10px; padding: 13px; min-height: 48px;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  /* visualizer: нуугдсан zero-width тэмдэгт бүрийг өнгөт цэг болгож харуулна */
+  .out .pip {
+    display: inline-block; width: .5em; height: 1em; margin: 0 1px;
+    vertical-align: -.15em; border-radius: 2px; opacity: .85;
+  }
+  .out .pip.b0 { background: var(--accent); }
+  .out .pip.b1 { background: var(--good); }
+  .out .pip.b2 { background: var(--warn); }
+  .out .pip.b3 { background: var(--bad); }
+  .copy, .mini {
+    font: inherit; font-size: .8rem; font-weight: 600;
+    border: 0; border-radius: 8px; padding: 5px 12px; cursor: pointer;
+  }
+  .copy { background: var(--accent-soft); color: var(--accent); }
+  .mini { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+  .mini[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+  .msg { font-size: .9rem; margin-top: 10px; min-height: 1.2em; }
+  .msg.bad { color: var(--bad); }
+  .msg.good { color: var(--good); }
+
+  .note {
+    display: flex; gap: 9px; align-items: flex-start;
+    font-size: .85rem; color: var(--muted); margin-top: 22px;
+  }
+  .note svg { flex: none; margin-top: 2px; color: var(--accent); }
+  .foot { margin-top: 26px; font-size: .82rem; color: var(--muted); text-align: center; }
+  code { font-family: var(--mono); font-size: .85em; background: var(--surface-2); padding: 1px 5px; border-radius: 5px; }
+</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Space+Grotesk:wght@400;500;600&display=swap">
+
+<div class="wrap">
+  <header>
+    <h1>Энгийн текст <em>дотор</em> нууцаа нуу.</h1>
+  </header>
+
+  <!-- НУУХ -->
+  <div class="panel">
+    <h2 class="sec-head">Нуух</h2>
+    <section id="pane-hide">
+      <label>
+        <span class="lab">Нууц мессеж <span class="count" id="count-secret">0 тэмдэгт</span></span>
+        <textarea id="secret" placeholder="Уулзалт шөнө дундад болно."></textarea>
+      </label>
+      <label>
+        <span class="lab">Далд текст <span class="opt">хүмүүст харагдах зүйл</span></span>
+        <textarea id="cover" placeholder="Мэдээлэл өгсөнд баярлалаа, дараа ярилцъя!"></textarea>
+      </label>
+      <label>
+        <span class="lab">Нууц үг</span>
+        <div class="pwrow">
+          <input type="password" id="pw-hide" placeholder="хоосон орхивол алгасна">
+          <button type="button" class="ghost" data-toggle="pw-hide">Харах</button>
+        </div>
+        <div class="meter" id="meter" hidden>
+          <div class="meter-track"><div class="meter-fill" id="meter-fill"></div></div>
+          <div class="meter-label" id="meter-label"></div>
+        </div>
+      </label>
+      <button class="go" id="do-hide">Мессеж нуух</button>
+
+      <div class="result" id="result-hide" hidden>
+        <div class="result-head">
+          <span class="lab">Үр дүн — ижил харагдана, нууцыг агуулна</span>
+          <div class="result-actions">
+            <button class="mini" id="peek-hide" aria-pressed="false">Шагайх</button>
+            <button class="copy" id="copy-hide">Хуулах</button>
+          </div>
+        </div>
+        <div class="out" id="out-hide" aria-live="polite"></div>
+        <div class="msg good" id="msg-hide"></div>
+      </div>
+      <div class="msg bad" id="err-hide"></div>
+    </section>
+  </div>
+
+  <!-- ИЛРҮҮЛЭХ -->
+  <div class="panel">
+    <h2 class="sec-head">Илрүүлэх</h2>
+    <section id="pane-reveal">
+      <label>
+        <span class="lab">Шалгах текст <span class="count" id="count-carrier">0 нуугдсан</span></span>
+        <textarea id="carrier" placeholder="Энгийн харагдах текстээ энд буулгана уу"></textarea>
+      </label>
+      <label>
+        <span class="lab">Нууц үг <span class="opt">хэрэв шифрлэсэн бол</span></span>
+        <div class="pwrow">
+          <input type="password" id="pw-reveal" placeholder="байхгүй бол хоосон">
+          <button type="button" class="ghost" data-toggle="pw-reveal">Харах</button>
+        </div>
+      </label>
+      <button class="go" id="do-reveal">Нууцыг илрүүлэх</button>
+
+      <div class="result" id="result-reveal" hidden>
+        <div class="result-head">
+          <span class="lab">Сэргээсэн мессеж</span>
+          <div class="result-actions">
+            <button class="mini" id="peek-reveal" aria-pressed="false">Шагайх</button>
+            <button class="copy" id="copy-reveal">Хуулах</button>
+          </div>
+        </div>
+        <div class="out" id="out-reveal" aria-live="polite"></div>
+        <div class="msg good" id="msg-reveal"></div>
+      </div>
+      <div class="msg bad" id="err-reveal"></div>
+    </section>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  // --- үл үзэгдэх цагаан толгой: 4 zero-width тэмдэгт = тус бүр 2 бит ---
+  const ALPHABET = ["​", "‌", "‍", "⁠"];
+  const INVIS_RE = /[​‌‍⁠]/g;
+  // Хуваалцсан формат: "IK" magic, version, flag; байтын бүтцийг steg.js-ээс үз.
+  const MAGIC = [0x49, 0x4b];
+  const VERSION = 1;
+  const FLAG_PLAIN = 0, FLAG_ENC = 1;
+  const PBKDF2_ROUNDS = 200000;
+  const enc = new TextEncoder(), dec = new TextDecoder();
+
+  const concat = (...arrs) => {
+    const total = arrs.reduce((n, a) => n + a.length, 0);
+    const out = new Uint8Array(total);
+    let o = 0;
+    for (const a of arrs) { out.set(a, o); o += a.length; }
+    return out;
+  };
+
+  async function pipe(bytes, stream) {
+    const buf = await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer();
+    return new Uint8Array(buf);
+  }
+  const deflate = (b) => pipe(b, new CompressionStream("deflate-raw"));
+  const inflate = (b) => pipe(b, new DecompressionStream("deflate-raw"));
+
+  async function deriveKey(password, salt) {
+    const base = await crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]);
+    return crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt, iterations: PBKDF2_ROUNDS, hash: "SHA-256" },
+      base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
+    );
+  }
+
+  function toInvisible(bytes) {
+    let s = "";
+    for (const byte of bytes)
+      for (let shift = 6; shift >= 0; shift -= 2) s += ALPHABET[(byte >> shift) & 3];
+    return s;
+  }
+  function fromInvisible(str) {
+    if (str.length % 4 !== 0) throw new Error("Нуугдсан өгөгдөл дутуу байна.");
+    const out = new Uint8Array(str.length / 4);
+    for (let i = 0; i < out.length; i++) {
+      let byte = 0;
+      for (let j = 0; j < 4; j++) {
+        const v = ALPHABET.indexOf(str[i * 4 + j]);
+        if (v < 0) throw new Error("Нуугдсан өгөгдөлд гэнэтийн тэмдэгт оржээ.");
+        byte = (byte << 2) | v;
+      }
+      out[i] = byte;
+    }
+    return out;
+  }
+
+  async function hide(secret, cover, password) {
+    if (!secret) throw new Error("Эхлээд нууц мессежээ бичнэ үү.");
+    if (!cover.trim()) throw new Error("Нуух далд текстээ оруулна уу.");
+    let payload = await deflate(enc.encode(secret));
+    let flag = FLAG_PLAIN;
+    if (password) {
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const key = await deriveKey(password, salt);
+      const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, payload));
+      payload = concat(salt, iv, ct);
+      flag = FLAG_ENC;
+    }
+    const header = new Uint8Array([...MAGIC, VERSION, flag]);
+    const invisible = toInvisible(concat(header, payload));
+    const sp = cover.indexOf(" ");
+    const at = sp === -1 ? cover.length : sp;
+    return cover.slice(0, at) + invisible + cover.slice(at);
+  }
+
+  async function reveal(text, password) {
+    const hidden = (text.match(INVIS_RE) || []).join("");
+    if (!hidden) throw new Error("Энэ текстэд нуугдсан мессеж алга. Нуусан текстээ заавал «Хуулах» товчоор хуулж тавиарай — гараар сонгоход үл үзэгдэх тэмдэгт орхигдож болзошгүй.");
+    const data = fromInvisible(hidden);
+    if (data.length < 4 || data[0] !== MAGIC[0] || data[1] !== MAGIC[1])
+      throw new Error("Энэ нь Нууц Бэх-ийн мессеж биш бололтой.");
+    if (data[2] !== VERSION) throw new Error("Энэ мессеж дэмжигдээгүй хувилбартай байна.");
+    const flag = data[3];
+    let payload = data.subarray(4);
+    if (flag === FLAG_ENC) {
+      if (!password) throw new Error("Энэ мессеж шифрлэгдсэн — нууц үгээ оруулна уу.");
+      const salt = payload.subarray(0, 16), iv = payload.subarray(16, 28), ct = payload.subarray(28);
+      const key = await deriveKey(password, salt);
+      try {
+        payload = new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct));
+      } catch { throw new Error("Нууц үг буруу, эсвэл мессеж өөрчлөгдсөн байна."); }
+    } else if (flag !== FLAG_PLAIN) {
+      throw new Error("Үл мэдэгдэх мессежийн формат.");
+    }
+    return dec.decode(await inflate(payload));
+  }
+
+  // --- туслах функцууд ---
+  const $ = (id) => document.getElementById(id);
+
+  // үл үзэгдэх мөрийг "Шагайх" горимд өнгөт цэг болгож хувиргана
+  function pipHTML(str) {
+    let html = "";
+    for (const ch of str) {
+      const i = ALPHABET.indexOf(ch);
+      if (i >= 0) html += `<span class="pip b${i}"></span>`;
+    }
+    return html;
+  }
+
+  function scorePassword(pw) {
+    if (!pw) return { pct: 0, label: "", color: "var(--faint)" };
+    let s = 0;
+    if (pw.length >= 8) s++;
+    if (pw.length >= 12) s++;
+    if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) s++;
+    if (/\d/.test(pw)) s++;
+    if (/[^A-Za-z0-9]/.test(pw)) s++;
+    const levels = [
+      { pct: 20, label: "Маш сул", color: "var(--bad)" },
+      { pct: 40, label: "Сул", color: "var(--bad)" },
+      { pct: 60, label: "Дунд зэрэг", color: "var(--warn)" },
+      { pct: 80, label: "Хүчтэй", color: "var(--good)" },
+      { pct: 100, label: "Маш хүчтэй", color: "var(--good)" },
+    ];
+    return levels[Math.min(s, 5) - 1] || levels[0];
+  }
+
+  // --- нууц үг харах/нуух ---
+  document.querySelectorAll("[data-toggle]").forEach((btn) => {
+    btn.onclick = () => {
+      const input = $(btn.dataset.toggle);
+      const show = input.type === "password";
+      input.type = show ? "text" : "password";
+      btn.textContent = show ? "Нуух" : "Харах";
+    };
+  });
+
+  // --- амьд тоолуур ---
+  $("secret").addEventListener("input", () => {
+    $("count-secret").textContent = `${[...$("secret").value].length} тэмдэгт`;
+  });
+  $("carrier").addEventListener("input", () => {
+    const n = ($("carrier").value.match(INVIS_RE) || []).length;
+    $("count-carrier").textContent = n ? `${n} нуугдсан` : "олдсонгүй";
+  });
+
+  // --- нууц үгийн хүч ---
+  $("pw-hide").addEventListener("input", () => {
+    const pw = $("pw-hide").value;
+    $("meter").hidden = !pw;
+    const { pct, label, color } = scorePassword(pw);
+    $("meter-fill").style.width = pct + "%";
+    $("meter-fill").style.background = color;
+    $("meter-label").textContent = label;
+  });
+
+  // Жинхэнэ үр дүнгүүдийг хувьсагчид хадгална — хуулах нь DOM-оос биш эндээс
+  // авдаг тул "Шагайх" горим эсвэл гараар сонголт нь үл үзэгдэх тэмдэгтийг устгахгүй.
+  let hiddenResult = "";
+  let revealResult = "";
+  let revealCarrier = "";
+
+  // --- хуулах, болдоггүй бол сонгож өгнө ---
+  function wireCopy(btnId, outId, getText) {
+    $(btnId).onclick = async () => {
+      const text = getText();
+      try {
+        await navigator.clipboard.writeText(text);
+        const old = $(btnId).textContent;
+        $(btnId).textContent = "Хууллаа!";
+        setTimeout(() => ($(btnId).textContent = old), 1400);
+      } catch {
+        // clipboard болохгүй бол жинхэнэ текстийг далд талбарт тавьж сонгоно
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand("copy"); } catch {}
+        ta.remove();
+        const old = $(btnId).textContent;
+        $(btnId).textContent = "Хууллаа!";
+        setTimeout(() => ($(btnId).textContent = old), 1400);
+      }
+    };
+  }
+  wireCopy("copy-hide", "out-hide", () => hiddenResult);
+  wireCopy("copy-reveal", "out-reveal", () => revealResult);
+
+  // --- Шагайх: нуугдсан өгөгдлийг нүдэнд харуулах ---
+  // on=true үед текстийг дотор нь өнгөт цэгтэйгээр, off үед жирийн текстээр үзүүлнэ.
+  function wirePeek(btnId, outId, getCarrier, getPlain) {
+    $(btnId).onclick = () => {
+      const btn = $(btnId);
+      const on = btn.getAttribute("aria-pressed") === "true";
+      btn.setAttribute("aria-pressed", String(!on));
+      const out = $(outId);
+      if (!on) {
+        const carrier = getCarrier();
+        const invis = (carrier.match(INVIS_RE) || []).join("");
+        out.innerHTML = carrier.replace(INVIS_RE, "").replace(/^(\S*)/, `$1${pipHTML(invis)}`);
+      } else {
+        out.textContent = getPlain();
+      }
+    };
+  }
+  // Нуух талд: гаралтын carrier-ийг визуалчилна. Илрүүлэх талд: буулгасан текстийг.
+  wirePeek("peek-hide", "out-hide", () => hiddenResult, () => hiddenResult);
+  wirePeek("peek-reveal", "out-reveal", () => revealCarrier, () => revealResult);
+
+  // --- үйлдлүүд ---
+  $("do-hide").onclick = async () => {
+    const btn = $("do-hide"); btn.disabled = true;
+    $("err-hide").textContent = "";
+    $("peek-hide").setAttribute("aria-pressed", "false");
+    try {
+      const result = await hide($("secret").value, $("cover").value, $("pw-hide").value);
+      hiddenResult = result;
+      $("out-hide").textContent = result;
+      $("result-hide").hidden = false;
+      const carried = (result.match(INVIS_RE) || []).length;
+      const locked = $("pw-hide").value ? " · шифрлэсэн" : "";
+      $("msg-hide").textContent = `Болсон — ${carried} үл үзэгдэх тэмдэгт сүлжсэн${locked}. Хаана ч хуулж болно.`;
+    } catch (e) {
+      $("result-hide").hidden = true;
+      $("err-hide").textContent = e.message;
+    } finally { btn.disabled = false; }
+  };
+
+  $("do-reveal").onclick = async () => {
+    const btn = $("do-reveal"); btn.disabled = true;
+    $("err-reveal").textContent = "";
+    try {
+      const result = await reveal($("carrier").value, $("pw-reveal").value);
+      revealResult = result;
+      $("out-reveal").textContent = result;
+      $("result-reveal").hidden = false;
+      $("msg-reveal").textContent = "Нууц амжилттай сэргээлээ.";
+    } catch (e) {
+      $("result-reveal").hidden = true;
+      $("err-reveal").textContent = e.message;
+    } finally { btn.disabled = false; }
+  };
+
+  // тоолуурыг эхлүүлэх
+  $("count-secret").textContent = `${[...$("secret").value].length} тэмдэгт`;
+})();
+</script>
