@@ -1,6 +1,17 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Энгийн текст дотор нууц мессежийг үл үзэгдэх тэмдэгтээр нуудаг хэрэгсэл.">
 <title>Нууц Бэх</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <style>
+  /* reset */
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  img { max-width: 100%; }
   /* Бүтэц: төвлөрсөн нэг багана, горим сонгогч, оролт дээр нь үр дүн доор нь */
   :root {
     --bg: #f4f5f9;
@@ -190,6 +201,8 @@
 </style>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500&family=Space+Grotesk:wght@400;500;600&display=swap">
+</head>
+<body>
 
 <div class="wrap">
   <header>
@@ -519,3 +532,6 @@
   $("count-secret").textContent = `${[...$("secret").value].length} тэмдэгт`;
 })();
 </script>
+
+</body>
+</html>
